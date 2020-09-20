@@ -1,0 +1,12 @@
+{
+  "name": "app05-native-prueba02",
+  "displayName": "app05-native-prueba02",
+  "expo": {
+    "name": "app05-native-prueba02",
+    "slug": "app05-native-prueba02",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
