@@ -7,15 +7,15 @@ export default class HomeView extends Component{
     styles = StyleSheet.create({
         title: {
             fontWeight: 'bold',
-            fontSize: 100,
-            color: 'purple'
+            fontSize: 30,
+            color: 'black'
         },
         buttMenu:{
             backgroundColor: 'black',
             marginTop: 20,
             paddingHorizontal: 20,
             paddingVertical: 10,
-            borderRadius: 10
+            borderRadius: 3
         },
         text: {
             color: 'white',
@@ -29,7 +29,7 @@ export default class HomeView extends Component{
     render() {
         return (
             <Container>
-                <Text style={this.styles.title}>Tacos Js</Text>
+                <Text style={this.styles.title}>Taquería Don Erik</Text>
                 <TouchableOpacity style={this.styles.buttMenu} onPress={this.menuHandle}>
                     <Text style={this.styles.text}>Ver menú</Text>
                 </TouchableOpacity>
