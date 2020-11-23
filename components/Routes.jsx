@@ -1,9 +1,10 @@
 import React, {Component, Fragment} from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Menu from './Menu';
+import TacosMenu from './TacosMenu';
 import HomeView from './HomeView';
-import { Text } from 'react-native';
+import ProductView from './ProductView';
+
 
 const Stack = createStackNavigator();
 
@@ -13,8 +14,9 @@ export default class Routes extends Component{
         return (
             <NavigationContainer>
                 <Stack.Navigator>
-                    <Stack.Screen name="TacoManiaco" component={HomeView} />
-                    <Stack.Screen name="Menu" component={Menu} />
+                <Stack.Screen name="Home" component={HomeView} />
+                    <Stack.Screen name="Menu" component={TacosMenu} />
+                    <Stack.Screen name="Product" component={ProductView} />
                 </Stack.Navigator>
             </NavigationContainer>
         );

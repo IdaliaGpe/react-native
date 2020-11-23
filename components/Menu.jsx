@@ -1,15 +1,38 @@
 import React, { Component, Fragment } from 'react';
-import {StyleSheet, View, Text, Button, ScrollView, FlatList, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, Button, ScrollView} from 'react-native';
 import Container from './Container';
+import {gql, getApolloContext} from '@apollo/client'
 
-import axios from 'axios';
+const GET_All_PRODUCTS = gql`
+  {
+    products{
+      id
+      name
+      price
+      productGroup{
+        name
+      }
+    }
+  }
+`;
 
+const GET_ONE_PRODUCT = gql`
+    query($id: ID!){
+      product(id: $id){
+        name
+        price
+        productGroup{
+          name
+        }
+      }
+  }
+`;
 
 export default class TacosMenu extends Component{
+
+    static contextType = getApolloContext();
+
     styles = StyleSheet.create({
-        list: {
-          
-        },
         itemListContainer: {
           marginLeft: 5
         },
@@ -32,64 +55,64 @@ export default class TacosMenu extends Component{
           fontSize: 20,
           paddingTop: 20
         },
-        button: {
-          alignItems: 'center',
-          backgroundColor: 'purple',
-          padding: 10,
-          color: 'white',
-          fontWeight: 'bold',
-          borderRadius: 6
+        space:{
+          paddingTop: 10
         },
-        buttonTitle:{
-          color: 'white',
-          fontWeight: 'bold',
-          },
-          space:{
-            paddingTop: 10
-          }
+        numberInput: {
+          height: 40, 
+          borderColor: 'gray',
+          borderWidth: 1 
+        }
       });
     
       state = {
         tacos: []
       }
-      componentDidMount(){
-        axios.get('http://192.168.1.86:5000')
-        .then(res => res.data)
-        .then(data => {
-          this.setState({tacos: data})
-          console.log(this.state.tacos);
-        });
+
+      componentDidMount = async ()=>{
+        const {client} = this.context;
+        const response = await client.query({query: GET_All_PRODUCTS});
+        this.setState({tacos: response.data.products.filter( product => product.productGroup.name === 'Taco')});
+        console.log(this.state.tacos);
       }
     
-      callOrder = ()=> {
-        console.log('taco ordenado')
+      seeProduct = ()=> {
+        /*const {client} = this.context;
+        client.query({query: GET_ONE_PRODUCT, variables: {id}})
+        .then(res => {
+          const {name, price} = res.data.product;
+          console.log({name, price, quantity});
+        });*/
+        //console.log({tacoId: id, tacoQuantity: quantity});
+        this.props.navigation.push('Menu');
       }
     
       renderTacoItem = taco =>{
-        return <View key={taco.id} style={this.styles.viewGrid}>
-          <View style={this.styles.itemListContainer}>
-            <Text style={this.styles.title}>Nombre del taco</Text>
-            <Text>{taco.name}</Text>
-            <Text style={this.styles.title}>Cantidad de la orden</Text>
-            <Text>{taco.quantity} tacos</Text>
-            <Text style={this.styles.title}>¿Es picante?</Text>
-            <Text>{taco.pica}</Text>
+        const {viewGrid, title, numberInput, itemListContainer} = this.styles;
+        const {id, name, price} = taco;
+        let quantity = 0;
+        return <View key={id} style={viewGrid}>
+          <View style={itemListContainer}>
+            <Text style={title}>Nombre del taco</Text>
+            <Text>{name}</Text>
+            <Text style={title}>Precio</Text>
+            <Text>{price}</Text>
+            <Text style={title}>Cantidad</Text>
           </View>
-          <TouchableOpacity style={this.styles.button} onPress={this.callOrder}><Text style={this.styles.buttonTitle}>ORDENAR</Text>
-        </TouchableOpacity>
+          <Button title='Agregar a la orden' onPress={this.seeProduct}/>
         </View>;
       } 
     
-      getTacosList = ()=> this.state.tacos.map(taco => this.renderTacoItem(taco));
+    getTacosList = ()=> this.state.tacos.map(taco => this.renderTacoItem(taco));
 
-      render() {
-          return (
-            <Container>
-              <ScrollView style={this.styles.scroll}> 
-                <View style={this.styles.space}></View>
-                {this.getTacosList()}
-              </ScrollView>
-            </Container>
-          );
-      }
-  }
+    render() {
+        return (
+          <Container>
+            <ScrollView style={this.styles.scroll}> 
+              <View style={this.styles.space}></View>
+              {this.getTacosList()}
+            </ScrollView>
+          </Container>
+        );
+    }
+}
